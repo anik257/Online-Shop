@@ -1,0 +1,7 @@
+# Outfit Avenue – Netlify SPA Redirect Fallback
+# This file serves as a backup to netlify.toml [[redirects]].
+# Ensures React Router client-side routes work on direct URL access and refresh.
+# Routes: /, /shop, /cart, /checkout, /product/*, /categories,
+#         /order-confirmation/*, /payment/callback,
+#         /admin, /admin/login, /admin/products, /admin/categories, /admin/orders
+/*    /index.html   200

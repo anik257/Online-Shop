@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-neutral-200/80 bg-white/95 backdrop-blur-md transition-all">
+      <header className="sticky top-0 z-40 w-full border-b border-[#E8DFC9] bg-[#F7F1E3] transition-all">
         {/* Top Announcement Bar */}
         <div className="bg-neutral-900 px-4 py-2 text-center text-xs font-medium text-neutral-200">
           <div className="mx-auto flex max-w-7xl items-center justify-between">
@@ -37,7 +37,7 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="inline-flex items-center justify-center rounded-lg p-2 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 focus:outline-none lg:hidden"
+              className="inline-flex items-center justify-center rounded-lg p-2 text-neutral-800 hover:bg-[#EFE8D8] hover:text-neutral-950 focus:outline-none lg:hidden"
               aria-label="Open mobile navigation menu"
             >
               <Menu className="h-6 w-6" />
@@ -56,7 +56,7 @@ export const Header: React.FC = () => {
                 <span className="font-serif text-2xl font-extrabold tracking-tight text-neutral-950 sm:text-2xl">
                   {BRAND.name}
                 </span>
-                <span className="text-[9px] uppercase tracking-[0.25em] text-neutral-500 font-semibold -mt-1 hidden sm:block">
+                <span className="text-[9px] uppercase tracking-[0.25em] text-neutral-600 font-semibold -mt-1 hidden sm:block">
                   Dhaka • Est. 2026
                 </span>
               </div>
@@ -73,7 +73,7 @@ export const Header: React.FC = () => {
                   `relative py-1 text-sm font-semibold tracking-wide transition-colors duration-150 ${
                     isActive
                       ? 'text-neutral-950 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-neutral-950'
-                      : 'text-neutral-600 hover:text-neutral-950'
+                      : 'text-neutral-700 hover:text-neutral-950'
                   }`
                 }
               >
@@ -88,17 +88,17 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50/80 px-3.5 py-2 text-xs font-medium text-neutral-500 hover:border-neutral-300 hover:bg-white hover:text-neutral-900 transition-all shadow-2xs"
+              className="flex items-center gap-2 rounded-full border border-neutral-300/80 bg-white/90 px-3.5 py-2 text-xs font-medium text-neutral-600 hover:border-neutral-400 hover:bg-white hover:text-neutral-900 transition-all shadow-2xs"
               aria-label="Search items"
             >
-              <Search className="h-4 w-4 text-neutral-500" />
+              <Search className="h-4 w-4 text-neutral-600" />
               <span className="hidden sm:inline">Search...</span>
             </button>
 
             {/* Admin Login Button */}
             <Link
               to="/admin/login"
-              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-700 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white transition-all duration-150"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-neutral-300/80 bg-white/80 px-3 py-2 text-xs font-medium text-neutral-800 hover:border-neutral-950 hover:bg-neutral-950 hover:text-white transition-all duration-150"
               title="Admin Portal"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
@@ -113,7 +113,7 @@ export const Header: React.FC = () => {
             >
               <ShoppingBag className="h-5 w-5" />
               {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber-400 text-[11px] font-bold text-neutral-950 ring-2 ring-white">
+                <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber-400 text-[11px] font-bold text-neutral-950 ring-2 ring-[#F7F1E3]">
                   {totalItems > 99 ? '99+' : totalItems}
                 </span>
               )}

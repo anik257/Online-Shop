@@ -93,6 +93,7 @@ export const getPaymentStatusBadge = (status: string) => {
   const norm = (status || '').toLowerCase()
   switch (norm) {
     case 'paid':
+    case 'completed':
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
           Paid
@@ -247,6 +248,10 @@ export const AdminOrdersPage: React.FC = () => {
     setIsUpdatingStatus(true)
     setUpdateError(null)
 
+    const prevOrder = orders.find((o) => o.id === orderId) || activeOrder
+    const previousPaymentStatus = prevOrder?.payment_status?.toLowerCase()
+    const previousOrderStatus = prevOrder?.order_status?.toLowerCase()
+
     const res = await updateAdminOrderStatus(orderId, newOrderStatus, newPaymentStatus)
     setIsUpdatingStatus(false)
 
@@ -289,6 +294,20 @@ export const AdminOrdersPage: React.FC = () => {
         `Order marked as Cancelled. Stock was safely restored to inventory!`,
         'success'
       )
+    } else if (
+      previousPaymentStatus &&
+      newPaymentStatus &&
+      previousPaymentStatus !== newPaymentStatus &&
+      previousOrderStatus === newOrderStatus
+    ) {
+      showToast(`Payment status updated to "${newPaymentStatus.toUpperCase()}".`, 'success')
+    } else if (
+      previousPaymentStatus &&
+      newPaymentStatus &&
+      previousPaymentStatus !== newPaymentStatus &&
+      previousOrderStatus !== newOrderStatus
+    ) {
+      showToast('Order status and payment status updated successfully.', 'success')
     } else {
       showToast(`Order status updated to "${newOrderStatus.toUpperCase()}".`, 'success')
     }

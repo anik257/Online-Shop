@@ -381,7 +381,7 @@ export const CheckoutPage: React.FC = () => {
                       setFullName(e.target.value)
                       if (formErrors.fullName) setFormErrors((prev) => ({ ...prev, fullName: '' }))
                     }}
-                    placeholder="e.g. Mahfuzur Rahman"
+                    placeholder="e.g. Anik"
                     className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus:outline-none ${
                       formErrors.fullName
                         ? 'border-rose-400 bg-rose-50/30 focus:border-rose-600'
@@ -433,7 +433,7 @@ export const CheckoutPage: React.FC = () => {
                       setEmail(e.target.value)
                       if (formErrors.email) setFormErrors((prev) => ({ ...prev, email: '' }))
                     }}
-                    placeholder="mahfuz@example.com"
+                    placeholder="ajaj.anik180@gmail.com"
                     className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus:outline-none ${
                       formErrors.email
                         ? 'border-rose-400 bg-rose-50/30 focus:border-rose-600'

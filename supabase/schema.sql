@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS public.products (
   stock INTEGER NOT NULL DEFAULT 0,
   image_url TEXT,
   is_available BOOLEAN NOT NULL DEFAULT true,
+  has_sizes BOOLEAN NOT NULL DEFAULT false,
+  sizes TEXT[] DEFAULT '{}',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT products_name_not_empty CHECK (char_length(trim(name)) > 0),
@@ -114,7 +116,7 @@ CREATE TABLE IF NOT EXISTS public.payments (
     payment_method IN ('cod', 'bkash', 'nagad', 'card', 'bank_transfer', 'online')
   ),
   CONSTRAINT payments_status_valid CHECK (
-    payment_status IN ('pending', 'completed', 'failed', 'refunded')
+    payment_status IN ('pending', 'completed', 'paid', 'failed', 'refunded', 'cancelled')
   )
 );
 

@@ -254,6 +254,8 @@ export interface AdminProductPayload {
   stock: number
   image_url?: string | null
   is_available: boolean
+  has_sizes?: boolean
+  sizes?: string[]
 }
 
 /**
@@ -384,6 +386,8 @@ export async function createAdminProduct(
         stock: Math.max(0, Math.floor(payload.stock)),
         image_url: payload.image_url?.trim() || null,
         is_available: payload.is_available,
+        has_sizes: payload.has_sizes ?? false,
+        sizes: payload.has_sizes ? (payload.sizes || []) : [],
       })
       .select('*, categories(id, name, slug)')
       .single()
@@ -449,6 +453,13 @@ export async function updateAdminProduct(
 
     if (payload.is_available !== undefined) {
       updates.is_available = payload.is_available
+    }
+
+    if (payload.has_sizes !== undefined) {
+      updates.has_sizes = payload.has_sizes
+      updates.sizes = payload.has_sizes ? (payload.sizes || []) : []
+    } else if (payload.sizes !== undefined) {
+      updates.sizes = payload.sizes
     }
 
     const { data, error } = await supabase

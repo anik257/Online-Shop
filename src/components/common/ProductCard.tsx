@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ShoppingBag, Eye, Check } from 'lucide-react'
+import { ShoppingBag, Eye, Check, Zap } from 'lucide-react'
 import { BRAND } from '../../lib/brand'
 import { useCart } from '../../context/CartContext'
 import type { ProductWithCategory } from '../../services/products'
+import { BuyNowModal } from './BuyNowModal'
 
 interface ProductCardProps {
   product: ProductWithCategory
@@ -12,10 +13,23 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addItem } = useCart()
   const [isAdded, setIsAdded] = useState(false)
+  const [isBuyNowOpen, setIsBuyNowOpen] = useState(false)
+
+  const availableSizes = Boolean(product.has_sizes && product.sizes && product.sizes.length > 0)
+    ? product.sizes!
+    : []
+  const [selectedSize, setSelectedSize] = useState<string>(() => availableSizes[0] || '')
 
   const isOutOfStock = product.stock <= 0
   const isLowStock = product.stock > 0 && product.stock <= 10
   const hasDiscount = product.discount_price !== null && product.discount_price < product.price
+
+  const handleOpenBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (isOutOfStock) return
+    setIsBuyNowOpen(true)
+  }
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -135,44 +149,100 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           )}
           <span className="text-[10px] text-neutral-400 uppercase">BDT</span>
         </div>
+
+        {/* Size Selection — only shown if Has Size Options is ON and sizes are available */}
+        {availableSizes.length > 0 && (
+          <div className="mt-3 flex items-center justify-between gap-1">
+            <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">
+              Size:
+            </span>
+            <div className="flex items-center gap-1 flex-wrap justify-end">
+              {availableSizes.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setSelectedSize(size)
+                  }}
+                  className={`min-w-6 h-6 px-1.5 rounded-md text-[10px] font-bold transition-colors cursor-pointer ${
+                    selectedSize === size
+                      ? 'bg-neutral-950 text-white'
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 border border-neutral-200/60'
+                  }`}
+                  title={`Select size ${size}`}
+                  aria-label={`Size ${size}`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Actions */}
-      <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center gap-2">
+      <div className="mt-4 pt-3 border-t border-neutral-100 flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isOutOfStock}
+            className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold transition-all active:scale-98 cursor-pointer ${
+              isOutOfStock
+                ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
+                : isAdded
+                ? 'bg-emerald-600 text-white'
+                : 'bg-white text-neutral-800 border border-neutral-300 hover:bg-neutral-50 shadow-2xs'
+            }`}
+            title={isOutOfStock ? 'Product is currently sold out' : 'Add to cart'}
+          >
+            {isAdded ? (
+              <>
+                <Check className="h-3.5 w-3.5" />
+                <span>Added!</span>
+              </>
+            ) : (
+              <>
+                <ShoppingBag className="h-3.5 w-3.5" />
+                <span>{isOutOfStock ? 'Sold Out' : 'Add to Cart'}</span>
+              </>
+            )}
+          </button>
+
+          <Link
+            to={`/product/${product.slug}`}
+            className="inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white p-2.5 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors"
+            title="View product details"
+          >
+            <Eye className="h-4 w-4" />
+          </Link>
+        </div>
+
         <button
           type="button"
-          onClick={handleAddToCart}
+          onClick={handleOpenBuyNow}
           disabled={isOutOfStock}
-          className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold transition-all active:scale-98 cursor-pointer ${
+          className={`w-full inline-flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold transition-all active:scale-98 cursor-pointer ${
             isOutOfStock
               ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
-              : isAdded
-              ? 'bg-emerald-600 text-white'
               : 'bg-neutral-950 text-white hover:bg-neutral-800 shadow-xs'
           }`}
-          title={isOutOfStock ? 'Product is currently sold out' : 'Add to cart'}
+          title={isOutOfStock ? 'Product is currently sold out' : 'Buy Now'}
         >
-          {isAdded ? (
-            <>
-              <Check className="h-3.5 w-3.5" />
-              <span>Added!</span>
-            </>
-          ) : (
-            <>
-              <ShoppingBag className="h-3.5 w-3.5" />
-              <span>{isOutOfStock ? 'Sold Out' : 'Add to Cart'}</span>
-            </>
-          )}
+          <Zap className="h-3.5 w-3.5 fill-amber-300 text-amber-300" />
+          <span>Buy Now</span>
         </button>
-
-        <Link
-          to={`/product/${product.slug}`}
-          className="inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white p-2.5 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors"
-          title="View product details"
-        >
-          <Eye className="h-4 w-4" />
-        </Link>
       </div>
+
+      {/* Buy Now Express Checkout Modal */}
+      <BuyNowModal
+        isOpen={isBuyNowOpen}
+        onClose={() => setIsBuyNowOpen(false)}
+        product={product}
+        initialSize={selectedSize}
+      />
     </div>
   )
 }

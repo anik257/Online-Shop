@@ -41,6 +41,8 @@ interface ProductFormState {
   stock: string
   image_url: string
   is_available: boolean
+  has_sizes: boolean
+  sizes: string[]
 }
 
 const BLANK_FORM: ProductFormState = {
@@ -52,6 +54,8 @@ const BLANK_FORM: ProductFormState = {
   stock: '0',
   image_url: '',
   is_available: true,
+  has_sizes: false,
+  sizes: [],
 }
 
 // ── Main Component ────────────────────────────────────────────────────────────
@@ -130,11 +134,37 @@ export const AdminProductsPage: React.FC = () => {
     setTimeout(() => setToast(null), 4000)
   }
 
+  // Size state & helpers
+  const [newSizeInput, setNewSizeInput] = useState('')
+
+  const handleAddCustomSize = () => {
+    const trimmed = newSizeInput.trim().toUpperCase()
+    if (!trimmed) return
+    if (!form.sizes.includes(trimmed)) {
+      setForm((prev) => ({ ...prev, sizes: [...prev.sizes, trimmed] }))
+    }
+    setNewSizeInput('')
+  }
+
+  const handleAddPresetSize = (preset: string) => {
+    if (!form.sizes.includes(preset)) {
+      setForm((prev) => ({ ...prev, sizes: [...prev.sizes, preset] }))
+    }
+  }
+
+  const handleRemoveSize = (sizeToRemove: string) => {
+    setForm((prev) => ({
+      ...prev,
+      sizes: prev.sizes.filter((s) => s !== sizeToRemove),
+    }))
+  }
+
   // ── Modal Helpers ─────────────────────────────────────────────────────────
 
   const openAddModal = () => {
     setEditingProduct(null)
     setForm(BLANK_FORM)
+    setNewSizeInput('')
     setImageFile(null)
     setImagePreview(null)
     setFormError(null)
@@ -152,7 +182,10 @@ export const AdminProductsPage: React.FC = () => {
       stock: product.stock.toString(),
       image_url: product.image_url || '',
       is_available: product.is_available,
+      has_sizes: Boolean(product.has_sizes),
+      sizes: Array.isArray(product.sizes) ? [...product.sizes] : [],
     })
+    setNewSizeInput('')
     setImageFile(null)
     setImagePreview(product.image_url || null)
     setFormError(null)
@@ -163,6 +196,7 @@ export const AdminProductsPage: React.FC = () => {
     setModalOpen(false)
     setEditingProduct(null)
     setForm(BLANK_FORM)
+    setNewSizeInput('')
     setImageFile(null)
     setImagePreview(null)
     setFormError(null)
@@ -248,6 +282,8 @@ export const AdminProductsPage: React.FC = () => {
         stock,
         image_url: finalImageUrl,
         is_available: form.is_available,
+        has_sizes: form.has_sizes,
+        sizes: form.has_sizes ? form.sizes : [],
       }
 
       if (editingProduct) {
@@ -551,9 +587,16 @@ export const AdminProductsPage: React.FC = () => {
                           <p className="font-bold text-neutral-900 truncate max-w-[200px]">
                             {product.name}
                           </p>
-                          <p className="text-[10px] font-mono text-neutral-400 truncate mt-0.5">
-                            {product.id.slice(0, 8)}...
-                          </p>
+                          <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                            <span className="text-[10px] font-mono text-neutral-400 truncate">
+                              {product.id.slice(0, 8)}...
+                            </span>
+                            {product.has_sizes && product.sizes && product.sizes.length > 0 && (
+                              <span className="rounded bg-neutral-100 px-1.5 py-0.2 text-[9px] font-semibold text-neutral-600">
+                                {product.sizes.length} sizes: {product.sizes.join(', ')}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -862,6 +905,121 @@ export const AdminProductsPage: React.FC = () => {
                     <ToggleLeft className="h-8 w-8 text-neutral-400" />
                   )}
                 </button>
+              </div>
+
+              {/* Has Size Options Section */}
+              <div className="rounded-xl border border-neutral-200 bg-neutral-50/50 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-neutral-800">Has Size Options</p>
+                    <p className="text-[11px] text-neutral-500">
+                      {form.has_sizes
+                        ? 'ON — Customers can select from configured sizes'
+                        : 'OFF — Product has no size options (e.g. watches, bags)'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((p) => ({
+                        ...p,
+                        has_sizes: !p.has_sizes,
+                        sizes: !p.has_sizes && p.sizes.length === 0 ? ['S', 'M', 'L', 'XL', 'XXL'] : p.sizes,
+                      }))
+                    }
+                    className="cursor-pointer"
+                  >
+                    {form.has_sizes ? (
+                      <ToggleRight className="h-8 w-8 text-emerald-600" />
+                    ) : (
+                      <ToggleLeft className="h-8 w-8 text-neutral-400" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Size Management Area (Only when has_sizes is true) */}
+                {form.has_sizes && (
+                  <div className="pt-3 border-t border-neutral-200/80 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-neutral-700">Available Sizes:</span>
+                      <span className="text-[11px] text-neutral-400">
+                        {form.sizes.length} size{form.sizes.length === 1 ? '' : 's'} configured
+                      </span>
+                    </div>
+
+                    {/* Size Chips */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {form.sizes.map((s) => (
+                        <span
+                          key={s}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1 text-xs font-bold text-neutral-800 shadow-2xs"
+                        >
+                          <span>{s}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSize(s)}
+                            className="text-neutral-400 hover:text-rose-600 cursor-pointer ml-0.5"
+                            title={`Remove size ${s}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      ))}
+                      {form.sizes.length === 0 && (
+                        <span className="text-xs text-amber-700 italic">
+                          No sizes added yet. Use quick-add or type a size below.
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Add Size Controls */}
+                    <div className="flex items-center gap-2 pt-1">
+                      <input
+                        type="text"
+                        value={newSizeInput}
+                        onChange={(e) => setNewSizeInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            handleAddCustomSize()
+                          }
+                        }}
+                        placeholder="Add size (e.g. 42, 3XL, Free Size)..."
+                        className="flex-1 rounded-xl border border-neutral-300 bg-white px-3 py-1.5 text-xs text-neutral-800 placeholder:text-neutral-400 focus:border-neutral-900 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddCustomSize}
+                        className="inline-flex items-center gap-1 rounded-xl bg-neutral-950 px-3 py-1.5 text-xs font-bold text-white hover:bg-neutral-800 cursor-pointer"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        <span>Add</span>
+                      </button>
+                    </div>
+
+                    {/* Quick Presets */}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] uppercase font-bold text-neutral-400 mr-1">
+                        Quick Add:
+                      </span>
+                      {['S', 'M', 'L', 'XL', 'XXL'].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          disabled={form.sizes.includes(preset)}
+                          onClick={() => handleAddPresetSize(preset)}
+                          className={`rounded-md px-2 py-0.5 text-[10px] font-bold transition-all cursor-pointer ${
+                            form.sizes.includes(preset)
+                              ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
+                              : 'bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-100 hover:border-neutral-400'
+                          }`}
+                        >
+                          + {preset}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Form Actions */}

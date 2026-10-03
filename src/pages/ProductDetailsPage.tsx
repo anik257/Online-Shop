@@ -29,6 +29,19 @@ export const ProductDetailsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [isAdded, setIsAdded] = useState(false)
+  const [selectedSize, setSelectedSize] = useState<string>('')
+
+  const availableSizes = Boolean(product?.has_sizes && product.sizes && product.sizes.length > 0)
+    ? product.sizes!
+    : []
+
+  useEffect(() => {
+    if (product?.has_sizes && product.sizes && product.sizes.length > 0) {
+      setSelectedSize(product.sizes[0])
+    } else {
+      setSelectedSize('')
+    }
+  }, [product])
 
   useEffect(() => {
     async function loadProduct() {
@@ -306,6 +319,39 @@ export const ProductDetailsPage: React.FC = () => {
               </span>
             )}
           </div>
+
+          {/* Size Selector — only shown if product.has_sizes is ON and sizes exist */}
+          {availableSizes.length > 0 && (
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                  Size:
+                </label>
+                {selectedSize && (
+                  <span className="text-xs font-bold text-neutral-900">
+                    Selected: {selectedSize}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {availableSizes.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    className={`min-w-10 h-10 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      selectedSize === size
+                        ? 'bg-neutral-950 text-white shadow-xs'
+                        : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 border border-neutral-200/60'
+                    }`}
+                    aria-label={`Size ${size}`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Quantity Selector & Action Controls */}
           <div className="space-y-4 pt-2">

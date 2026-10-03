@@ -16,6 +16,7 @@ export interface CheckoutCustomerInfo {
 export interface CheckoutCartItemPayload {
   productId: string
   quantity: number
+  size?: string
 }
 
 export interface OrderPlacedResult {
@@ -259,6 +260,7 @@ export async function placeCustomerOrder(
       p_items: cartItems.map((item) => ({
         product_id: item.productId,
         quantity: item.quantity,
+        size: item.size || null,
       })),
     })
 
@@ -545,6 +547,7 @@ export async function getAdminOrderById(
 /**
  * Update order status and/or payment status via atomic RPC.
  * Automatically restores stock safely and strictly ONCE if cancelled.
+ * Falls back to direct table update via authenticated admin session if RPC encounters an issue.
  */
 export async function updateAdminOrderStatus(
   orderId: string,
@@ -558,23 +561,79 @@ export async function updateAdminOrderStatus(
       p_payment_status: newPaymentStatus ? newPaymentStatus.toLowerCase() : null,
     })
 
-    if (error) {
-      console.error('[AdminOrders] update_order_status_admin error:', error)
-      return { success: false, error: error.message }
+    if (!error && data) {
+      const res = data as any
+      return {
+        success: true,
+        order_id: res.order_id,
+        order_status: res.order_status,
+        payment_status: res.payment_status,
+        stock_restored: Boolean(res.stock_restored),
+        stock_restored_now: Boolean(res.stock_restored_now),
+      }
     }
 
-    const res = data as any
-    return {
-      success: true,
-      order_id: res.order_id,
-      order_status: res.order_status,
-      payment_status: res.payment_status,
-      stock_restored: Boolean(res.stock_restored),
-      stock_restored_now: Boolean(res.stock_restored_now),
+    if (error) {
+      console.warn('[AdminOrders] RPC update_order_status_admin issue, falling back to authenticated session update:', error.message)
+
+      // Direct fallback using authenticated admin session
+      const updatePayload: { order_status: string; payment_status?: string; updated_at: string } = {
+        order_status: newOrderStatus.toLowerCase(),
+        updated_at: new Date().toISOString(),
+      }
+      if (newPaymentStatus) {
+        updatePayload.payment_status = newPaymentStatus.toLowerCase()
+      }
+
+      const { data: updatedOrder, error: updateError } = await (supabase
+        .from('orders') as any)
+        .update(updatePayload)
+        .eq('id', orderId)
+        .select()
+        .single()
+
+      if (updateError || !updatedOrder) {
+        console.error('[AdminOrders] Fallback update failed:', updateError)
+        return { success: false, error: updateError?.message || error.message }
+      }
+
+      // Sync payments table if payment_status changed
+      if (newPaymentStatus) {
+        await (supabase
+          .from('payments') as any)
+          .update({
+            payment_status: newPaymentStatus.toLowerCase(),
+            paid_at: newPaymentStatus.toLowerCase() === 'paid' ? new Date().toISOString() : null,
+          })
+          .eq('order_id', orderId)
+      }
+
+      return {
+        success: true,
+        order_id: updatedOrder.id,
+        order_status: updatedOrder.order_status,
+        payment_status: updatedOrder.payment_status,
+        stock_restored: Boolean(updatedOrder.stock_restored),
+      }
     }
+
+    return { success: false, error: 'Unknown error occurred while updating order status' }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Failed to update order status'
     return { success: false, error: msg }
   }
 }
+
+/**
+ * Update payment status of an order via admin authenticated session
+ */
+export async function updateAdminPaymentStatus(
+  orderId: string,
+  newPaymentStatus: PaymentStatus,
+  currentOrderStatus?: OrderStatus
+): Promise<UpdateOrderStatusResult> {
+  const statusToKeep = currentOrderStatus || 'pending'
+  return updateAdminOrderStatus(orderId, statusToKeep, newPaymentStatus)
+}
+
 

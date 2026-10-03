@@ -45,6 +45,8 @@ export type Database = {
           stock: number
           image_url: string | null
           is_available: boolean
+          has_sizes: boolean
+          sizes: string[] | null
           created_at: string
           updated_at: string
         }
@@ -59,6 +61,8 @@ export type Database = {
           stock?: number
           image_url?: string | null
           is_available?: boolean
+          has_sizes?: boolean
+          sizes?: string[] | null
           created_at?: string
           updated_at?: string
         }
@@ -73,6 +77,8 @@ export type Database = {
           stock?: number
           image_url?: string | null
           is_available?: boolean
+          has_sizes?: boolean
+          sizes?: string[] | null
           created_at?: string
           updated_at?: string
         }

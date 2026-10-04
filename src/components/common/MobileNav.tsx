@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { NavLink, Link } from 'react-router-dom'
-import { X, Search, ShoppingBag, ShieldCheck, ChevronRight, Sparkles } from 'lucide-react'
+import { X, Search, ShoppingBag, ChevronRight, Sparkles } from 'lucide-react'
 import { BRAND } from '../../lib/brand'
 import { CUSTOMER_NAV_ITEMS } from '../../data/navigation'
 
@@ -124,22 +124,6 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             )}
           </NavLink>
 
-          <div className="pt-4 border-t border-neutral-100 mt-4">
-            <p className="px-3 text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2">
-              Staff & Management
-            </p>
-            <NavLink
-              to="/admin/login"
-              onClick={onClose}
-              className="flex items-center justify-between rounded-xl px-3.5 py-3 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors"
-            >
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-neutral-500" />
-                <span>Admin Login</span>
-              </div>
-              <ChevronRight className="h-4 w-4 opacity-50" />
-            </NavLink>
-          </div>
         </nav>
 
         {/* Drawer Footer Banner */}

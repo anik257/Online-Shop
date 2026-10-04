@@ -57,7 +57,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     : 0
 
   return (
-    <div className="group flex flex-col justify-between rounded-2xl border border-neutral-200/90 bg-white p-4 shadow-xs transition-all duration-300 hover:shadow-lg hover:border-neutral-300">
+    <div className="group flex flex-col justify-between rounded-2xl border border-neutral-200/90 bg-white p-2 sm:p-4 shadow-xs transition-all duration-300 hover:shadow-lg hover:border-neutral-300">
       {/* Product Image Area */}
       <div className="relative aspect-4/3 sm:aspect-square w-full overflow-hidden rounded-xl bg-neutral-100 border border-neutral-200/60">
         {product.image_url ? (
@@ -107,9 +107,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Product Details Meta */}
-      <div className="mt-3.5 flex-1 flex flex-col justify-between">
+      <div className="mt-2 sm:mt-3.5 flex-1 flex flex-col justify-between">
         <div>
-          <div className="flex items-center justify-between gap-1 text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+          <div className="flex items-center justify-between gap-1 text-[9px] sm:text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
             <span>{product.categories?.name || BRAND.name}</span>
             <span className="text-neutral-500 font-mono text-[10px]">
               {product.stock > 0 ? `${product.stock} pcs` : '0 pcs'}
@@ -118,24 +118,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           <Link
             to={`/product/${product.slug}`}
-            className="block mt-1 font-serif text-base font-bold text-neutral-900 hover:text-amber-800 transition-colors line-clamp-1"
+            className="block mt-0.5 sm:mt-1 font-serif text-xs sm:text-base font-bold text-neutral-900 hover:text-amber-800 transition-colors line-clamp-1"
             title={product.name}
           >
             {product.name}
           </Link>
 
           {product.description && (
-            <p className="mt-1 text-xs text-neutral-500 line-clamp-2 leading-relaxed">
+            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-neutral-500 line-clamp-1 sm:line-clamp-2 leading-relaxed">
               {product.description}
             </p>
           )}
         </div>
 
         {/* Pricing */}
-        <div className="mt-3 pt-2 flex items-baseline gap-2">
+        <div className="mt-1.5 sm:mt-3 pt-1.5 sm:pt-2 flex items-baseline gap-1.5 sm:gap-2">
           {hasDiscount ? (
             <>
-              <span className="font-serif text-lg font-black text-neutral-950">
+              <span className="font-serif text-sm sm:text-lg font-black text-neutral-950">
                 {BRAND.currency.symbol}{product.discount_price!.toLocaleString('en-BD')}
               </span>
               <span className="text-xs text-neutral-400 line-through">
@@ -143,7 +143,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </span>
             </>
           ) : (
-            <span className="font-serif text-lg font-black text-neutral-950">
+            <span className="font-serif text-sm sm:text-lg font-black text-neutral-950">
               {BRAND.currency.symbol}{product.price.toLocaleString('en-BD')}
             </span>
           )}
@@ -152,7 +152,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Size Selection — only shown if Has Size Options is ON and sizes are available */}
         {availableSizes.length > 0 && (
-          <div className="mt-3 flex items-center justify-between gap-1">
+          <div className="mt-1.5 sm:mt-3 flex items-center justify-between gap-1">
             <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">
               Size:
             </span>
@@ -183,13 +183,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Actions */}
-      <div className="mt-4 pt-3 border-t border-neutral-100 flex flex-col gap-2">
+      <div className="mt-2 sm:mt-4 pt-2 sm:pt-3 border-t border-neutral-100 flex flex-col gap-1.5 sm:gap-2">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleAddToCart}
             disabled={isOutOfStock}
-            className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold transition-all active:scale-98 cursor-pointer ${
+            className={`flex-1 inline-flex items-center justify-center gap-1 rounded-xl py-1.5 sm:py-2.5 text-[10px] sm:text-xs font-bold transition-all active:scale-98 cursor-pointer ${
               isOutOfStock
                 ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
                 : isAdded
@@ -224,7 +224,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           type="button"
           onClick={handleOpenBuyNow}
           disabled={isOutOfStock}
-          className={`w-full inline-flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-bold transition-all active:scale-98 cursor-pointer ${
+          className={`w-full inline-flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl py-1.5 sm:py-2.5 text-[10px] sm:text-xs font-bold transition-all active:scale-98 cursor-pointer ${
             isOutOfStock
               ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
               : 'bg-neutral-950 text-white hover:bg-neutral-800 shadow-xs'

@@ -1,9 +1,7 @@
 import type { NavItem } from '../types'
 
 export const CUSTOMER_NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
-  { label: 'Categories', href: '/categories' },
 ]
 
 export const ADMIN_NAV_ITEMS = [

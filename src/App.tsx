@@ -6,9 +6,7 @@ import { AdminProtectedRoute } from './components/admin/AdminProtectedRoute'
 import { CartProvider } from './context/CartContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
 import {
-  HomePage,
   ShopPage,
-  CategoriesPage,
   CartPage,
   CheckoutPage,
   OrderConfirmationPage,
@@ -30,9 +28,8 @@ export const App: React.FC = () => {
           <Routes>
             {/* Customer Facing Routes — 100% Guest, No Authentication Required */}
             <Route element={<CustomerLayout />}>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<ShopPage />} />
               <Route path="/shop" element={<ShopPage />} />
-              <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/product/:slug" element={<ProductDetailsPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />

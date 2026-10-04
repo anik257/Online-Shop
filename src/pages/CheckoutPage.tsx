@@ -15,6 +15,7 @@ import {
   Check,
 } from 'lucide-react'
 import { BRAND } from '../lib/brand'
+import { generateReceiptPdf } from '../utils/receipt'
 import { useCart } from '../context/CartContext'
 import { BANGLADESH_DIVISIONS } from '../data/bangladeshLocations'
 import {
@@ -26,9 +27,11 @@ import {
 import {
   placeCustomerOrder,
   verifyCartBeforeCheckout,
+  getOrderByNumber,
   FREE_SHIPPING_THRESHOLD,
   STANDARD_DELIVERY_CHARGE,
   type CartVerificationResult,
+  type OrderConfirmationDetails,
 } from '../services/orders'
 
 export const CheckoutPage: React.FC = () => {
@@ -202,12 +205,52 @@ export const CheckoutPage: React.FC = () => {
       }
 
       // Success! Clear cart from browser storage & memory
+      // Fetch full order confirmation details for receipt generation and confirmation view
+      let confirmationDetails: OrderConfirmationDetails | null = null
+      const { data: fetchedOrder } = await getOrderByNumber(data.order_number)
+
+      if (fetchedOrder) {
+        confirmationDetails = fetchedOrder
+      } else {
+        confirmationDetails = {
+          id: data.order_id,
+          order_number: data.order_number,
+          customer_name: data.customer_name,
+          phone: data.phone,
+          email: email.trim() || null,
+          division: data.division,
+          district: data.district,
+          area: data.area,
+          address: data.address,
+          delivery_notes: data.delivery_notes,
+          subtotal: data.subtotal,
+          delivery_charge: data.delivery_charge,
+          total_amount: data.total_amount,
+          payment_method: data.payment_method,
+          payment_status: data.payment_status,
+          order_status: data.order_status,
+          created_at: new Date().toISOString(),
+          items: items.map((item) => ({
+            id: item.id,
+            product_id: item.productId,
+            product_name: item.name,
+            quantity: item.quantity,
+            unit_price: item.unitPrice,
+            subtotal: item.unitPrice * item.quantity,
+            image_url: item.imageUrl || null,
+            slug: item.slug || null,
+          })),
+        }
+      }
+
+      // Generate receipt PDF for the newly created order
+      generateReceiptPdf(confirmationDetails)
       clearCart()
 
       // If Cash on Delivery, redirect immediately to order confirmation page
       if (paymentMethod === 'cod') {
         navigate(`/order-confirmation/${data.order_number}`, {
-          state: { order: data },
+          state: { order: confirmationDetails },
           replace: true,
         })
         return

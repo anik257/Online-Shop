@@ -316,7 +316,7 @@ export const ShopPage: React.FC = () => {
 
       {/* Loading Skeletons */}
       {loading && !error && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {[...Array(8)].map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -348,7 +348,7 @@ export const ShopPage: React.FC = () => {
 
       {/* Real Product Grid from Supabase */}
       {!loading && !error && products.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

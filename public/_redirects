@@ -1,7 +1,7 @@
-# Outfit Avenue – Netlify SPA Redirect Fallback
-# This file serves as a backup to netlify.toml [[redirects]].
-# Ensures React Router client-side routes work on direct URL access and refresh.
-# Routes: /, /shop, /cart, /checkout, /product/*, /categories,
-#         /order-confirmation/*, /payment/callback,
-#         /admin, /admin/login, /admin/products, /admin/categories, /admin/orders
-/*    /index.html   200
+# Outfit Avenue – Deployment Redirects
+# NOTE: The SPA fallback (/* /index.html 200) has been intentionally removed.
+#
+# - On Netlify:          SPA routing is handled by netlify.toml [[redirects]].
+# - On Cloudflare Pages: SPA routing is handled natively (no _redirects rule needed).
+#   Adding "/* /index.html 200" here causes Cloudflare to reject the deployment
+#   with "Infinite loop detected in this rule" because /* also matches /index.html.

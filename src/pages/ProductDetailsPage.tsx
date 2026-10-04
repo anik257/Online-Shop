@@ -31,8 +31,10 @@ export const ProductDetailsPage: React.FC = () => {
   const [isAdded, setIsAdded] = useState(false)
   const [selectedSize, setSelectedSize] = useState<string>('')
 
-  const availableSizes = Boolean(product?.has_sizes && product.sizes && product.sizes.length > 0)
-    ? product.sizes!
+if (!product) return null;
+
+const availableSizes = Boolean(product.has_sizes && product.sizes && product.sizes.length > 0)
+    ? product.sizes
     : []
 
   useEffect(() => {

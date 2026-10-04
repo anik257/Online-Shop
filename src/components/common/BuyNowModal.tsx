@@ -5,7 +5,7 @@ import {
   Zap,
   ShoppingBag,
   Truck,
-  ShieldCheck,
+
   AlertTriangle,
   Loader2,
   Plus,

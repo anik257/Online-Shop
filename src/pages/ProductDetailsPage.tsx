@@ -33,8 +33,8 @@ export const ProductDetailsPage: React.FC = () => {
 
 if (!product) return null;
 
-const availableSizes = Boolean(product.has_sizes && product.sizes && product.sizes.length > 0)
-    ? product.sizes
+const availableSizes: string[] = (product.has_sizes && product.sizes && product.sizes.length > 0)
+    ? product.sizes ?? []
     : []
 
   useEffect(() => {

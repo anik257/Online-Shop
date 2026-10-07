@@ -30,7 +30,7 @@ export const AdminLayout: React.FC = () => {
   ]
 
   const getPageTitle = () => {
-    if (location.pathname === '/admin') return 'Overview Dashboard'
+    if (location.pathname === '/admin' || location.pathname === '/admin/dashboard') return 'Overview Dashboard'
     if (location.pathname.startsWith('/admin/products')) return 'Product Management'
     if (location.pathname.startsWith('/admin/categories')) return 'Category Management'
     if (location.pathname.startsWith('/admin/orders')) return 'Order Operations'

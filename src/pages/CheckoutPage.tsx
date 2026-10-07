@@ -239,6 +239,7 @@ export const CheckoutPage: React.FC = () => {
             subtotal: item.unitPrice * item.quantity,
             image_url: item.imageUrl || null,
             slug: item.slug || null,
+            size: ('size' in item && typeof (item as { size?: string }).size === 'string') ? (item as { size?: string }).size || null : null,
           })),
         }
       }

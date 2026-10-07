@@ -47,6 +47,7 @@ export interface OrderConfirmationItem {
   subtotal: number
   image_url: string | null
   slug: string | null
+  size?: string | null
 }
 
 export interface OrderConfirmationDetails {

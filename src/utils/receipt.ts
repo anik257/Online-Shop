@@ -105,7 +105,8 @@ export function generateReceiptPdf(order: OrderConfirmationDetails) {
 
   const sym = BRAND.currency.symbol;
   (order.items || []).forEach((item) => {
-    const nameLines = doc.splitTextToSize(item.product_name, contentW * 0.55);
+    const itemTitle = item.size ? `${item.product_name} (${item.size})` : item.product_name;
+    const nameLines = doc.splitTextToSize(itemTitle, contentW * 0.55);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor('#111111');

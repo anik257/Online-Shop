@@ -9,15 +9,6 @@
   # Node version explicitly set for reproducible builds
   environment     = { NODE_VERSION = "20" }
 
-# ── SPA Fallback: React Router Client-Side Routing ───────────────────────────
-# This is the critical rule that makes all React Router routes work on Netlify.
-# Without this, any direct URL access or page refresh on /shop, /admin, etc.
-# would return Netlify's 404 page instead of the React app.
-[[redirects]]
-  from   = "/*"
-  to     = "/index.html"
-  status = 200
-
 # ── Security Headers ──────────────────────────────────────────────────────────
 [[headers]]
   for = "/*"
@@ -35,7 +26,7 @@
     # Permissions policy: restrict sensitive browser APIs
     Permissions-Policy          = "camera=(), microphone=(), geolocation=(), payment=(self)"
     # Content Security Policy
-    Content-Security-Policy     = "default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.supabase.co https://ugkppftezksyvmhemnpq.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none';"
+    Content-Security-Policy     = "default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none';"
 
 # ── Long-lived Cache for Hashed Static Assets ─────────────────────────────────
 # Vite outputs content-hashed filenames (e.g. index-Abc123.js), so these
@@ -52,7 +43,7 @@
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
 
-# ── No-cache for favicon ──────────────────────────────────────────────────────
+# ── Cache for favicon ─────────────────────────────────────────────────────────
 [[headers]]
   for = "/favicon.svg"
   [headers.values]

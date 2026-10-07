@@ -33,6 +33,7 @@ export const App: React.FC = () => {
               <Route path="/product/:slug" element={<ProductDetailsPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
               <Route path="/order-confirmation/:orderNumber" element={<OrderConfirmationPage />} />
               <Route path="/payment/callback" element={<PaymentCallbackPage />} />
               <Route path="*" element={<NotFoundPage />} />
@@ -45,6 +46,7 @@ export const App: React.FC = () => {
             <Route element={<AdminProtectedRoute />}>
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboardPage />} />
+                <Route path="dashboard" element={<AdminDashboardPage />} />
                 <Route path="products" element={<AdminProductsPage />} />
                 <Route path="categories" element={<AdminCategoriesPage />} />
                 <Route path="orders" element={<AdminOrdersPage />} />
